@@ -118,15 +118,29 @@ Envie o acesso administrador da plataforma externa para <b>migrar@herospark.com<
 <th>Observações</th>
 </tr>
 </thead>
-<tbody>
+<tbody id="checklistTable">
 <tr>
-<td><select><option></option><option>Curso</option></select></td>
-<td><input></td>
-<td><select><option></option><option>Educação</option></select></td>
-<td><input></td>
-<td><input></td>
-<td><input></td>
-<td><input></td>
+<td>
+<select class="tipo">
+<option></option>
+<option>Curso</option>
+<option>Mentoria</option>
+<option>Assinatura</option>
+</select>
+</td>
+<td><input class="nome"></td>
+<td>
+<select class="segmento">
+<option></option>
+<option>Educação</option>
+<option>Marketing</option>
+<option>Saúde</option>
+</select>
+</td>
+<td><input class="oferta"></td>
+<td><input class="assinatura"></td>
+<td><input class="drive"></td>
+<td><input class="obs"></td>
 </tr>
 </tbody>
 </table>
@@ -172,12 +186,29 @@ function criarChecklist() {
 
 // ================= CLIENTE =================
 function enviarChecklist() {
-    fetch(`${API_URL}?action=enviar&id=${checklistId}`)
+    const linhas = document.querySelectorAll("#checklistTable tr");
+    const dados = [];
+
+    linhas.forEach(linha => {
+        dados.push({
+            tipo: linha.querySelector(".tipo").value,
+            nome: linha.querySelector(".nome").value,
+            segmento: linha.querySelector(".segmento").value,
+            oferta: linha.querySelector(".oferta").value,
+            assinatura: linha.querySelector(".assinatura").value,
+            drive: linha.querySelector(".drive").value,
+            observacoes: linha.querySelector(".obs").value
+        });
+    });
+
+    fetch(`${API_URL}?action=enviar&id=${checklistId}&dados=${encodeURIComponent(JSON.stringify(dados))}`)
       .then(() => {
           alert("Checklist enviado com sucesso!");
       });
 }
+
 </script>
 
 </body>
 </html>
+

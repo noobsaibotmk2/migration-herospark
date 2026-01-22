@@ -23,11 +23,6 @@ h1 {
     margin-bottom: 10px;
 }
 
-.subtext {
-    font-size: 13px;
-    margin-bottom: 10px;
-}
-
 .alert-red {
     color: red;
     font-size: 13px;
@@ -39,6 +34,21 @@ h1 {
     padding: 10px;
     font-size: 13px;
     margin-bottom: 20px;
+}
+
+input, select {
+    width: 100%;
+    padding: 6px;
+    border: 1px solid #ccc;
+    font-size: 12px;
+}
+
+button {
+    background: #ffcc00;
+    border: none;
+    padding: 10px 25px;
+    font-weight: bold;
+    cursor: pointer;
 }
 
 table {
@@ -58,83 +68,61 @@ td {
     padding: 5px;
 }
 
-tr:nth-child(even) td {
-    background: #f7f7f7;
-}
-
-input, select {
-    width: 100%;
-    padding: 6px;
-    border: 1px solid #ccc;
-    font-size: 12px;
-}
-
 .actions {
     margin-top: 15px;
     text-align: right;
 }
 
-button {
-    background: #ffcc00;
-    border: none;
-    padding: 10px 25px;
-    font-weight: bold;
-    cursor: pointer;
+.hidden {
+    display: none;
 }
 </style>
 </head>
 
 <body>
 
-<div class="container">
+<!-- ================= ADMIN ================= -->
+<div class="container" id="admin">
+<h1>Gerar Checklist</h1>
+
+<input id="responsavel" placeholder="Responsável">
+<br><br>
+<input id="cliente" placeholder="Cliente">
+<br><br>
+
+<button onclick="criarChecklist()">Criar Checklist</button>
+</div>
+
+<!-- ================= CLIENTE ================= -->
+<div class="container hidden" id="clienteView">
 
 <h1>MIGRAÇÃO DE PRODUTOS</h1>
 
-<div class="subtext">
-Informe os dados para migração do produto da plataforma externa.
-</div>
-
 <div class="alert-red">
-Todos os campos em vermelho são obrigatórios para avançarmos com a migração!
+Preencha todos os dados corretamente para avançarmos com a migração.
 </div>
 
 <div class="alert-yellow">
-Para migração de produtos, enviar o acesso administrador da plataforma externa para
-<b>migrar@herospark.com</b>
+Envie o acesso administrador da plataforma externa para <b>migrar@herospark.com</b>
 </div>
 
 <table>
 <thead>
 <tr>
 <th>Tipo de Produto</th>
-<th>Nome do Produto (Individual)</th>
-<th>Segmento do Produto</th>
-<th>Links Ofertas Unitárias</th>
-<th>Links Ofertas Assinaturas</th>
-<th>Link do Drive Conteúdos</th>
+<th>Nome do Produto</th>
+<th>Segmento</th>
+<th>Link Oferta Unitária</th>
+<th>Link Assinatura</th>
+<th>Drive Conteúdos</th>
 <th>Observações</th>
 </tr>
 </thead>
-
-<tbody id="linhas">
+<tbody>
 <tr>
-<td>
-<select>
-<option></option>
-<option>Curso</option>
-<option>Mentoria</option>
-<option>Assinatura</option>
-</select>
-</td>
+<td><select><option></option><option>Curso</option></select></td>
 <td><input></td>
-<td>
-<select>
-<option></option>
-<option>Educação</option>
-<option>Marketing</option>
-<option>Saúde</option>
-</select>
-</td>
+<td><select><option></option><option>Educação</option></select></td>
 <td><input></td>
 <td><input></td>
 <td><input></td>
@@ -150,29 +138,39 @@ Para migração de produtos, enviar o acesso administrador da plataforma externa
 </div>
 
 <script>
-// 🔴 COLE A URL DO SEU APPS SCRIPT AQUI
-const API_URL = "https://script.google.com/macros/s/AKfycbzTPPQtmgmuN0RoLqg0iQXXOs6eYPW1pVgujKsEPtAzMdbjsVNTorl2UQb-99IZSf0F8A/exec";
+// ================= CONFIG =================
+const API_URL  = "https://script.google.com/macros/s/AKfycbzTPPQtmgmuN0RoLqg0iQXXOs6eYPW1pVgujKsEPtAzMdbjsVNTorl2UQb-99IZSf0F8A/exec";
+const BASE_URL = "https://noobsaibotmk2.github.io/migration-herospark/";
 
+// ================= CONTROLE =================
 const params = new URLSearchParams(window.location.search);
-let checklistId = params.get("id");
+const checklistId = params.get("id");
 
-if (!checklistId) {
-    criarChecklist();
+if (checklistId) {
+    document.getElementById("admin").classList.add("hidden");
+    document.getElementById("clienteView").classList.remove("hidden");
 }
 
+// ================= ADMIN =================
 function criarChecklist() {
-    const cliente = prompt("Nome do Cliente:");
-    const responsavel = prompt("Seu nome:");
+    const cliente = document.getElementById("cliente").value;
+    const responsavel = document.getElementById("responsavel").value;
 
-    checklistId = Date.now();
-    const link = window.location.href + "?id=" + checklistId;
+    if (!cliente || !responsavel) {
+        alert("Preencha todos os campos.");
+        return;
+    }
+
+    const id = Date.now();
+    const link = BASE_URL + "?id=" + id;
 
     fetch(`${API_URL}?action=criar&cliente=${encodeURIComponent(cliente)}&responsavel=${encodeURIComponent(responsavel)}&link=${encodeURIComponent(link)}`)
       .then(() => {
-          window.location.href = link;
+          alert("Checklist criado!\n\nEnvie este link ao cliente:\n" + link);
       });
 }
 
+// ================= CLIENTE =================
 function enviarChecklist() {
     fetch(`${API_URL}?action=enviar&id=${checklistId}`)
       .then(() => {

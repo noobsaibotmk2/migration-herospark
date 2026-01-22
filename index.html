@@ -178,11 +178,19 @@ function criarChecklist() {
     const id = Date.now();
     const link = BASE_URL + "?id=" + id;
 
-    fetch(`${API_URL}?action=criar&cliente=${encodeURIComponent(cliente)}&responsavel=${encodeURIComponent(responsavel)}&link=${encodeURIComponent(link)}`)
-      .then(() => {
-          alert("Checklist criado!\n\nEnvie este link ao cliente:\n" + link);
-      });
+    fetch(
+        `${API_URL}?action=criar&cliente=${encodeURIComponent(cliente)}&responsavel=${encodeURIComponent(responsavel)}&link=${encodeURIComponent(link)}`
+    )
+    .then(res => res.json()) // 🔴 ISSO É O QUE FALTAVA
+    .then(() => {
+        alert("Checklist criado!\n\nEnvie este link ao cliente:\n" + link);
+    })
+    .catch(err => {
+        console.error(err);
+        alert("Erro ao criar checklist. Verifique o console.");
+    });
 }
+
 
 // ================= CLIENTE =================
 function enviarChecklist() {
@@ -211,5 +219,6 @@ function enviarChecklist() {
 
 </body>
 </html>
+
 
 

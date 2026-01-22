@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Migração de Produtos</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f2f2f2;
+}
+
+.container {
+    background: #fff;
+    max-width: 1400px;
+    margin: 20px auto;
+    padding: 20px;
+}
+
+h1 {
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+.subtext {
+    font-size: 13px;
+    margin-bottom: 10px;
+}
+
+.alert-red {
+    color: red;
+    font-size: 13px;
+    margin-bottom: 10px;
+}
+
+.alert-yellow {
+    background: #ffcc00;
+    padding: 10px;
+    font-size: 13px;
+    margin-bottom: 20px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+
+th {
+    background: #d9d9d9;
+    border: 1px solid #ccc;
+    padding: 8px;
+}
+
+td {
+    border: 1px solid #e0e0e0;
+    padding: 5px;
+}
+
+tr:nth-child(even) td {
+    background: #f7f7f7;
+}
+
+input, select {
+    width: 100%;
+    padding: 6px;
+    border: 1px solid #ccc;
+    font-size: 12px;
+}
+
+.actions {
+    margin-top: 15px;
+    text-align: right;
+}
+
+button {
+    background: #ffcc00;
+    border: none;
+    padding: 10px 25px;
+    font-weight: bold;
+    cursor: pointer;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>MIGRAÇÃO DE PRODUTOS</h1>
+
+<div class="subtext">
+Informe os dados para migração do produto da plataforma externa.
+</div>
+
+<div class="alert-red">
+Todos os campos em vermelho são obrigatórios para avançarmos com a migração!
+</div>
+
+<div class="alert-yellow">
+Para migração de produtos, enviar o acesso administrador da plataforma externa para
+<b>migrar@herospark.com</b>
+</div>
+
+<table>
+<thead>
+<tr>
+<th>Tipo de Produto</th>
+<th>Nome do Produto (Individual)</th>
+<th>Segmento do Produto</th>
+<th>Links Ofertas Unitárias</th>
+<th>Links Ofertas Assinaturas</th>
+<th>Link do Drive Conteúdos</th>
+<th>Observações</th>
+</tr>
+</thead>
+
+<tbody id="linhas">
+<tr>
+<td>
+<select>
+<option></option>
+<option>Curso</option>
+<option>Mentoria</option>
+<option>Assinatura</option>
+</select>
+</td>
+<td><input></td>
+<td>
+<select>
+<option></option>
+<option>Educação</option>
+<option>Marketing</option>
+<option>Saúde</option>
+</select>
+</td>
+<td><input></td>
+<td><input></td>
+<td><input></td>
+<td><input></td>
+</tr>
+</tbody>
+</table>
+
+<div class="actions">
+<button onclick="enviarChecklist()">Enviar</button>
+</div>
+
+</div>
+
+<script>
+// 🔴 COLE A URL DO SEU APPS SCRIPT AQUI
+const API_URL = "https://script.google.com/macros/s/AKfycbzTPPQtmgmuN0RoLqg0iQXXOs6eYPW1pVgujKsEPtAzMdbjsVNTorl2UQb-99IZSf0F8A/exec";
+
+const params = new URLSearchParams(window.location.search);
+let checklistId = params.get("id");
+
+if (!checklistId) {
+    criarChecklist();
+}
+
+function criarChecklist() {
+    const cliente = prompt("Nome do Cliente:");
+    const responsavel = prompt("Seu nome:");
+
+    checklistId = Date.now();
+    const link = window.location.href + "?id=" + checklistId;
+
+    fetch(`${API_URL}?action=criar&cliente=${encodeURIComponent(cliente)}&responsavel=${encodeURIComponent(responsavel)}&link=${encodeURIComponent(link)}`)
+      .then(() => {
+          window.location.href = link;
+      });
+}
+
+function enviarChecklist() {
+    fetch(`${API_URL}?action=enviar&id=${checklistId}`)
+      .then(() => {
+          alert("Checklist enviado com sucesso!");
+      });
+}
+</script>
+
+</body>
+</html>
